@@ -2,7 +2,9 @@
 A simple Spring framwork.
 
 ## Feature
-* [IoC Feature](https://github.com/Yikun/simple-spring/blob/master/src/test/java/com/springstudy/simplespring/TestIoC.java)
+**IoC Feature:**
+* [Basic bean](https://github.com/Yikun/simple-spring/blob/master/src/test/java/com/springstudy/simplespring/TestIoC.java#L12)
+* [Bean with property](https://github.com/Yikun/simple-spring/blob/master/src/test/java/com/springstudy/simplespring/TestIoC.java#L29)
 
 ## Download
 ```bash

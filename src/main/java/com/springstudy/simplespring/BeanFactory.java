@@ -1,5 +1,6 @@
 package com.springstudy.simplespring;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +19,12 @@ public class BeanFactory {
 	public Object getBean(String beanName) {
 		Object bean = getSingleton(beanName);
 		if(bean == null) {
-			bean = doCreateBean(beanName, beanDefinitionMap.get(beanName));
+			try {
+				bean = doCreateBean(beanName, beanDefinitionMap.get(beanName));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			singletonObjects.put(beanName, bean);
 		}
 		return bean;
@@ -27,21 +33,27 @@ public class BeanFactory {
 	private Object getSingleton(String beanName) {
 		return this.singletonObjects.get(beanName);
 	}
+
+	private Object doCreateBean(final String beanName, final BeanDefinition beanDefinition) throws Exception {
+		Object bean = createBeanInstance(beanDefinition);
+		applyPropertyValues(bean, beanDefinition);
+		return bean;
+	}
 	
-	private Object doCreateBean(final String beanName, final BeanDefinition beanDefinition)
-	{
-		try {
-			Object bean;
-			bean = beanDefinition.getBeanClass().newInstance();
-			return bean;
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private Object createBeanInstance(final BeanDefinition beanDefinition) throws Exception {
+		Object bean;
+		bean = beanDefinition.getBeanClass().newInstance();
+		return bean;
+	}
+	
+	private void applyPropertyValues(Object bean, BeanDefinition beanDefinition) throws Exception{
+		PropertyValues pvs = beanDefinition.getPropertyValues();
+		if(pvs != null) {
+			for(PropertyValue pv : pvs.getPropertyValueList()) {
+					Field field = bean.getClass().getDeclaredField(pv.getName());
+					field.setAccessible(true);
+					field.set(bean, pv.getValue());
+			}
 		}
-		
-		return null;
 	}
 }
